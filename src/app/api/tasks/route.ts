@@ -1,14 +1,14 @@
 // app/api/tasks/route.js
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { response } = body;
 
     // Check if the SSE controller exists
-    if (globalThis.sseController) {
+    if ((globalThis as any).sseController) {
       const data = `data: ${response}\n\n`;
-      globalThis.sseController.enqueue(data);
+      (globalThis as any).sseController.enqueue(data);
     } else {
       console.warn("No SSE connection established");
     }

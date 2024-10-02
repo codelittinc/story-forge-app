@@ -26,6 +26,7 @@ const TaskForm = () => {
           fullWidth
           multiline
           focused
+          autoFocus
           margin="normal"
           value={taskDescription}
           onChange={(e) => setTaskDescription(e.target.value)}
