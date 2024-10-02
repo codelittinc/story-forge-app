@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ThemeRegistry from "@/theme/themeRegistry";
+import { Box } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <Box 
+            component="main" 
+            sx={{ flex: 1, bgcolor: '#eaeff1', minHeight: '100vh' }}
+          >
+            {children}
+          </Box>
+        </ThemeRegistry>
       </body>
     </html>
   );

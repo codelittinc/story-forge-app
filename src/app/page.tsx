@@ -1,60 +1,40 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Paper, Grid, Box } from "@mui/material";
+import { Paper, Grid, Box, AppBar, Toolbar, Typography } from "@mui/material";
 import Response from "../components/Response";
 import TaskForm from "@/components/TaskForm";
+import usePageController from "./presenters/controllers/usePageController";
 
 function App() {
-  const [webhookData, setWebhookData] = useState("");
-  const [sessionId, setSessionId] = useState("");
-
-  useEffect(() => {
-    if (sessionId == "") {
-      // generate random session id
-      const randomSessionId = Math.random().toString(36).substring(7);
-      setSessionId(randomSessionId);
-    }
-  }, [sessionId, setSessionId]);
-  // Establish SSE connection
-  useEffect(() => {
-    const eventSource = new EventSource("/api/events");
-
-    eventSource.onmessage = (event) => {
-      const data = event.data; // Parse the JSON data
-      console.log("SSE message received:", data);
-      setWebhookData(data);
-    };
-
-    eventSource.onerror = (error) => {
-      console.error("SSE error:", error);
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
-
+  const { webhookData } = usePageController();
   return (
-    <Grid
-      container
-      spacing={2}
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Grid item xs={6}>
-        <Paper elevation={3}>
-          <TaskForm />
-          {webhookData && (
-            <Box mt={2}>
-              <Response markdown={webhookData} />
-            </Box>
-          )}
-        </Paper>
-      </Grid>
-    </Grid>
+    <Box sx={{
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      minHeight: '100vh',
+      padding: '20px' 
+    }}>
+      <Paper sx={{ maxWidth: 936, margin: 'auto', overflow: 'hidden', width: '960px' }}>
+        <AppBar
+          position="static"
+          color="default"
+          elevation={0}
+          sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+        >
+          <Toolbar>
+            <TaskForm />
+          </Toolbar>
+        </AppBar>
+        <Typography align="center" sx={{ color: 'text.secondary', my: 8, mx: 2 }}>
+            {webhookData && (
+              <Box mt={2}>
+                <Response markdown={webhookData} />
+              </Box>
+            )}
+        </Typography>
+      </Paper>
+    </Box>
   );
 }
 
