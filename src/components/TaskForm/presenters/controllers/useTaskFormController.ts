@@ -16,7 +16,7 @@ const useTaskFormController = () => {
     taskDescription,
     setTaskDescription,
     handleSubmit,
-    loading
+    loading,
   };
 };
 

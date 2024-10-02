@@ -3,11 +3,9 @@
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { response } = body;
-
     // Check if the SSE controller exists
     if ((globalThis as any).sseController) {
-      const data = `data: ${response}\n\n`;
+      const data = `data: ${JSON.stringify(body)}\n\n`;
       (globalThis as any).sseController.enqueue(data);
     } else {
       console.warn("No SSE connection established");

@@ -1,5 +1,3 @@
-// app/api/events/route.ts
-
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -10,17 +8,38 @@ export async function GET(request: NextRequest) {
     return new Response("Expected text/event-stream", { status: 400 });
   }
 
-  // Create a stream to send events to the client
+  let streamClosed = false; // Track whether the stream is closed
+
   const stream = new ReadableStream({
     start(controller) {
       // Store the controller to send data later
       (globalThis as any).sseController = controller;
 
-      // Send a comment to keep the connection alive (optional)
+      // Send an initial comment to keep the connection alive
       controller.enqueue(`: connected\n\n`);
+
+      // Periodically send a heartbeat to keep the connection alive
+      const keepAlive = setInterval(() => {
+        if (!streamClosed) {
+          // Only enqueue data if the stream is still open
+          try {
+            controller.enqueue(`: keep-alive\n\n`);
+          } catch (error) {
+            console.error("Error enqueuing data: ", error);
+          }
+        }
+      }, 30000); // Every 30 seconds
+
+      // Clean up when the stream is closed
+      controller.close = () => {
+        console.log("SSE connection closed by the server");
+        clearInterval(keepAlive);
+      };
     },
     cancel() {
-      console.log("SSE connection closed by client");
+      console.log("SSE connection closed by the client");
+      streamClosed = true; // Mark the stream as closed
+      clearInterval((globalThis as any).keepAlive);
       delete (globalThis as any).sseController;
     },
   });
