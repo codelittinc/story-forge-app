@@ -19,7 +19,7 @@ const components: React.ComponentProps<typeof ReactMarkdown>["components"] = {
 
 const Response = ({ markdown }: Props) => {
   return (
-    <Box textAlign="left">
+    <Box>
       <ReactMarkdown components={components}>{markdown}</ReactMarkdown>
     </Box>
   );

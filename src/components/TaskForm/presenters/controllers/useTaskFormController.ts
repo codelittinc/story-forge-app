@@ -12,11 +12,19 @@ const useTaskFormController = () => {
     createTask(taskDescription, SessionService.getSessionId());
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && taskDescription.trim() != "") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return {
     taskDescription,
     setTaskDescription,
     handleSubmit,
     loading,
+    handleKeyDown,
   };
 };
 
